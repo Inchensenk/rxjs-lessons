@@ -1,8 +1,9 @@
 import {Observable} from "rxjs";
+import {debounce, debounceTime} from "rxjs/operators";
+import {map} from "rxjs/operators"
 
-
-const search$ = new Observable(observer => {
-  const search = document.querySelector('#search1');
+const search$ = new Observable<Event>(observer => {
+  const search = document.querySelector('#search');
 
   if (!search){
     observer.error('Element does not exist on the page');
@@ -15,17 +16,13 @@ const search$ = new Observable(observer => {
 });
 
 
-
-search$.subscribe({
-
-  next: value => {
-    console.log(value);
-  },
-  error: err => console.log(err),
-
-  complete: () => {
-    console.log('event end');
-  }
+search$.pipe(
+  map(event => {
+    return (event.target as HTMLInputElement).value;
+  }),
+  debounceTime(500))
+  .subscribe(  value => {
+  console.log(value);
 
 });
 
