@@ -1,5 +1,5 @@
 import {Observable} from "rxjs";
-import {debounce, debounceTime} from "rxjs/operators";
+import {debounce, debounceTime, distinctUntilChanged} from "rxjs/operators";
 import {map} from "rxjs/operators"
 
 const search$ = new Observable<Event>(observer => {
@@ -20,8 +20,11 @@ search$.pipe(
   map(event => {
     return (event.target as HTMLInputElement).value;
   }),
-  debounceTime(500))
-  .subscribe(  value => {
+
+  debounceTime(500),
+  map(value => value.length > 3 ? value : ''),
+  distinctUntilChanged(),
+  ).subscribe(  value => {
   console.log(value);
 
 });
